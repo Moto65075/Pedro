@@ -8,7 +8,6 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "c:/Users/moto/Documents/PlatformIO/Projects/pedro/include",
                 "c:/Users/moto/Documents/PlatformIO/Projects/pedro/src",
                 "c:/Users/moto/Documents/PlatformIO/Projects/pedro/lib/FluxGarage_RoboEyes_for_OLED_Displays/src",
                 "c:/Users/moto/Documents/PlatformIO/Projects/pedro/.pio/libdeps/pedro/WakeOnLan/src",
@@ -363,7 +362,6 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "c:/Users/moto/Documents/PlatformIO/Projects/pedro/include",
                     "c:/Users/moto/Documents/PlatformIO/Projects/pedro/src",
                     "c:/Users/moto/Documents/PlatformIO/Projects/pedro/lib/FluxGarage_RoboEyes_for_OLED_Displays/src",
                     "c:/Users/moto/Documents/PlatformIO/Projects/pedro/.pio/libdeps/pedro/WakeOnLan/src",

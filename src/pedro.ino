@@ -66,7 +66,7 @@ void sleeperTimeout() {
     }
     break;
   case SLEEP_OVER:
-    goLightSleep();
+    lightSleep();
     break;
   }
 }
@@ -91,7 +91,7 @@ void setup() {
   ledcAttach(STATUS_LED_PIN, LEDC_FREQ, LEDC_RES);
   
   if(cause == ESP_SLEEP_WAKEUP_EXT0) {
-    blinkStatusLed(3, 100, 100);
+     fadeOut(5);
   }
 
   delay(10);
@@ -99,6 +99,7 @@ void setup() {
   pushLog("PEDRO READY");
   setupEyes();
   handleWifiManager();
+  setupI2s();
   pmood = IDLE;
   pushLog("POWER ON COMPLETE");
   lastActiveTime = millis();

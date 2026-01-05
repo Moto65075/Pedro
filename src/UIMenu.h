@@ -24,6 +24,7 @@ private:
     void drawPowerMenu(const Menu &menu);
     void drawMainSection(const Menu &menu);   // Info / Tests / Logs
     void drawPowerSection(const Menu &menu);  // modos de energia
+    void drawWaves();
 };
 
 #endif

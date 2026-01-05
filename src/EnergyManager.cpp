@@ -55,3 +55,4 @@ void fadeOut(int speed) {
     delay(FADE_INTERVAL);
   }
 }
+

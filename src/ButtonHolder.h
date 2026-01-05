@@ -5,22 +5,23 @@
 
 class ButtonHolder {
 public:
+    // Mudamos para INPUT apenas, pois o TTP223 envia sinal ativo
     ButtonHolder(gpio_num_t pin, uint32_t longPressMs = 800);
 
-    void update();          // chama em todo loop
-    bool shortPressed();    // evento: clique curto (1 vez)
-    bool longPressed();     // evento: long press (1 vez, sem precisar soltar)
+    void update();          
+    bool shortPressed();    
+    bool longPressed();     
 
 private:
     gpio_num_t _pin;
     uint32_t _longPressMs;
 
-    bool _lastLevel   = HIGH;
+    // Lógica para Touch: LOW solto, HIGH pressionado
+    bool _lastLevel   = LOW; 
     bool _isPressing  = false;
     bool _shortFired  = false;
     bool _longFired   = false;
     uint32_t _pressedTime = 0;
-    uint32_t _lastChange  = 0;
 };
 
 #endif

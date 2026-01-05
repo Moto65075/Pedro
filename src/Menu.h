@@ -3,6 +3,7 @@
 
 // #include <Arduino.h>
 #include "EnergyManager.h"
+#include "Web.h"
 /*
 #include <WakeOnLan.h>
 #include <WiFiUDP.h>*/

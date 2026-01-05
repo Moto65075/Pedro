@@ -79,4 +79,19 @@
  .pio/libdeps/pedro/Adafruit\ BusIO/Adafruit_SPIDevice.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
- src/PedroDefinitions.h
+ src/PedroDefinitions.h src/Web.h \
+ .pio/libdeps/pedro/WiFiManager/WiFiManager.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/HashBuilder.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/HEXBuilder.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src/WebServer.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/FS/src/FS.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src/HTTP_Method.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src/Uri.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src/middleware/Middleware.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src/detail/RequestHandler.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/DNSServer/src/DNSServer.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src/AsyncUDP.h \
+ .pio/libdeps/pedro/WiFiManager/wm_strings_en.h \
+ .pio/libdeps/pedro/WiFiManager/wm_consts_en.h

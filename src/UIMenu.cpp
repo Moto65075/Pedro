@@ -79,6 +79,39 @@ void UIMenu::drawPowerMenu(const Menu &menu) {
     _display.setCursor(0, 54);
     _display.print("Power: SEL  Next: MOVE");
     _display.display();
+} 
+
+void UIMenu::drawWaves() {
+    static float lastAmp[64];
+    int32_t buffer[64];
+    size_t bytes_read = 0;
+    
+    i2s_channel_read(rx_handle, buffer, sizeof(buffer), &bytes_read, 10);
+    
+    int samples = bytes_read / sizeof(int32_t);
+    if (samples == 0) return;
+
+    display.clearDisplay();
+
+    for (int i = 0; i < 64; i++) {
+        int32_t raw = buffer[i] >> 8; 
+        int val = abs(raw);
+
+         if (val > 150) {  
+           float amp = (val - 150) / 800.0; 
+            
+            if (amp > 31) amp = 31; 
+            if (amp > lastAmp[i]) lastAmp[i] = amp; 
+            else lastAmp[i] *= 0.85; 
+        } else {
+            lastAmp[i] *= 0.70;
+        }
+
+        int x = i * 2;
+        int h = (int)lastAmp[i];
+        display.drawLine(x, 32 - h, x, 32 + h, SSD1306_WHITE);
+    }
+    display.display();
 }
 
 void UIMenu::drawMainSection(const Menu &menu) {
@@ -130,6 +163,10 @@ void UIMenu::drawPowerSection(const Menu &menu) {
         case 1:
             _display.println("NIGHT SLEEP");
             _display.println("Brilho baixo / sleep");
+            break;
+        case 2:
+            drawWaves();
+            return;
             break;
     }
 

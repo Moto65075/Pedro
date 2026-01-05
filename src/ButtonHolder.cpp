@@ -3,33 +3,34 @@
 ButtonHolder::ButtonHolder(gpio_num_t pin, uint32_t longPressMs)
 : _pin(pin), _longPressMs(longPressMs)
 {
-    pinMode(_pin, INPUT_PULLUP);
+    // TTP223 não precisa de Pullup interno, ele já empurra 3.3V ou 0V
+    pinMode(_pin, INPUT);
 }
 
 void ButtonHolder::update() {
-    bool level = digitalRead(_pin);      // HIGH solto, LOW pressionado
+    // No Touch TTP223: HIGH = Pressionado, LOW = Solto
+    bool level = digitalRead(_pin); 
     uint32_t now = millis();
 
-    // debounce
-    if (level != _lastLevel && (now - _lastChange) > 20) {
-        _lastChange = now;
-        _lastLevel  = level;
+    // Detecta mudança de estado (Toque ou Soltura)
+    if (level != _lastLevel) {
+        _lastLevel = level;
 
-        if (level == LOW) {              // começou a pressionar
+        if (level == HIGH) { // Começou a tocar
             _isPressing  = true;
             _shortFired  = false;
             _longFired   = false;
             _pressedTime = now;
-        } else {                         // soltou
+        } else {             // Parou de tocar
             _isPressing = false;
-            // se não virou long, libera short
+            // Se soltou antes de virar Long Press, ativa o Short Press
             if (!_longFired && (now - _pressedTime) < _longPressMs) {
                 _shortFired = true;
             }
         }
     }
 
-    // long press enquanto segura
+    // Lógica de Long Press: dispara se continuar segurando após o tempo definido
     if (_isPressing && !_longFired && (now - _pressedTime) >= _longPressMs) {
         _longFired = true;
     }

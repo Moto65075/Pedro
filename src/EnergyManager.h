@@ -15,5 +15,6 @@ void deepSleep();
 void lightSleep();
 void pushLog(const String &log);
 void fadeOut(int speed);
+void drawWaves(int16_t *buffer, size_t length);
 
 #endif

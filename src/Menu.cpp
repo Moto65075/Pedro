@@ -57,19 +57,16 @@ void Menu::select() {
                 returnTo(UIState::IDLE_MODE);
                 return;
             case 1: 
-                goLightSleep();
+                lightSleep();
                 returnTo(UIState::IDLE_MODE);
                 return;
                 break;
-            case 2: {/*
-                String macStr = "2C:2B:F9:B0:18:62";
-                wol.sendMagicPacket(macStr);
-                Serial.println("Magic Packet enviado para " + String(macStr));
-                break;*/
+            case 2: {
+                break;
             }
             case 3:
                 
-                goDeepSleepNoTimer();
+                deepSleep();
                 break;
         }
     } 
