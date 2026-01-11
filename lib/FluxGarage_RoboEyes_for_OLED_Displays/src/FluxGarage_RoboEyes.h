@@ -32,7 +32,7 @@ uint8_t BGCOLOR = 0; // background and overlays
 uint8_t MAINCOLOR = 1; // drawings
 
 // For mood type switch
-#define DEFAULT 0
+#define GAZE_CENTER 0
 #define TIRED 1
 #define ANGRY 2
 #define HAPPY 3
@@ -50,7 +50,7 @@ uint8_t MAINCOLOR = 1; // drawings
 #define SW 6 // south-west, bottom left
 #define W 7 // west, middle left
 #define NW 8 // north-west, top left 
-// for middle center set "DEFAULT"
+// for middle center set "GAZE_CENTER"
 
 
 // Constructor: takes a reference to the active Adafruit display object (e.g., Adafruit_SSD1327)
@@ -355,7 +355,7 @@ void setPosition(unsigned char position)
       eyeLxNext = 0;
       eyeLyNext = 0;
       break;
-    default:
+    case GAZE_CENTER:
       // Middle center
       eyeLxNext = getScreenConstraint_X()/2;
       eyeLyNext = getScreenConstraint_Y()/2;

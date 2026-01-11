@@ -26,7 +26,7 @@ void UIMenu::drawIdle(const Menu &) {
 }
 
 void UIMenu::drawMainMenu(const Menu &menu) {
-    static const char *opts[] = { "Info", "WiFi", "LOGS", "Exit" };
+    static const char *opts[] = { "Info", "Outputs", "Tests", "Exit" };
 
     _display.clearDisplay();
     _display.setTextSize(1);
@@ -128,19 +128,20 @@ void UIMenu::drawMainSection(const Menu &menu) {
             _display.println("WiFiManager v34");
             _display.println("Battery: N/A");
             break;
-        case 1: // Tests
-            _display.println("WiFi");
+        case 1: // Outputs
+            _display.println("Outputs");
+            _display.println("" + LOGS);
             if(WiFi.isConnected()) {
-                _display.println("Connected");
                 _display.println(WiFi.SSID());
                 _display.println(WiFi.localIP().toString());
             } else {
                 _display.println("Not connected");
             }
             break;
-        case 2: // Logs
-            _display.println("LOGS");
-            _display.println("" + LOGS);
+        case 2: // Tests
+            _display.println("Tests");
+            drawWaves();
+            return;
             break;
     }
 
@@ -165,8 +166,6 @@ void UIMenu::drawPowerSection(const Menu &menu) {
             _display.println("Brilho baixo / sleep");
             break;
         case 2:
-            drawWaves();
-            return;
             break;
     }
 

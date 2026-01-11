@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include <Adafruit_SSD1306.h>
 #include <WiFiManager.h>
+#include <WiFi.h>
+#include "mbedtls/base64.h"
 #include "driver/i2s_std.h"
 #include "EnergyManager.h"
 #include "PedroDefinitions.h"
@@ -25,7 +27,9 @@ struct Response {
 };
 
 void handleWifiManager();
-void setupI2s();
-int32_t readMIC();
+void startMIC();
+void startSpeaker();
+String makeRequest(String method, const char* host, int port, String uri);
+void processAudio(WiFiClient &client);
 
 #endif 

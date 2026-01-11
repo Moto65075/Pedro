@@ -3,7 +3,7 @@
 extern String LOGS;
 
 void enableWakeByButton() {
-  esp_sleep_enable_ext0_wakeup(WAKE_BUTTON_PIN, 0);
+  esp_sleep_enable_ext0_wakeup(WAKE_BUTTON_PIN, 1);
 }
 
 void deepSleep() {
@@ -55,4 +55,3 @@ void fadeOut(int speed) {
     delay(FADE_INTERVAL);
   }
 }
-

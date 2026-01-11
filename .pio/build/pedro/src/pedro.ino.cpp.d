@@ -56,7 +56,6 @@
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
  .pio/libdeps/pedro/Adafruit\ SSD1306/Adafruit_SSD1306.h \
  lib/FluxGarage_RoboEyes_for_OLED_Displays/src/FluxGarage_RoboEyes.h \
- src/PedroDefinitions.h src/EnergyManager.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiType.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiSTA.h \
@@ -80,8 +79,8 @@
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiServer.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/Network/src/NetworkUdp.h \
- src/UIMenu.h src/Menu.h src/Web.h \
- .pio/libdeps/pedro/WiFiManager/WiFiManager.h \
+ src/PedroDefinitions.h src/EnergyManager.h src/UIMenu.h src/Menu.h \
+ src/Web.h .pio/libdeps/pedro/WiFiManager/WiFiManager.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/HashBuilder.h \
