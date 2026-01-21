@@ -1,6 +1,7 @@
 #include "UIMenu.h"
 
 extern WiFiManager wm;
+bool diagnosticExecuted = false;
 
 UIMenu::UIMenu(Adafruit_SSD1306 &display)
 : _display(display) {}
@@ -22,12 +23,14 @@ void UIMenu::draw(const Menu &menu) {
 }
 
 void UIMenu::drawIdle(const Menu &) {
-  ledcWrite(STATUS_LED_PIN, 50);
+    RGB(0, 45, 255);
 }
 
 void UIMenu::drawMainMenu(const Menu &menu) {
     static const char *opts[] = { "Info", "Outputs", "Tests", "Exit" };
 
+    RGB(255, 255, 255);
+    if(diagnosticExecuted) diagnosticExecuted = false;
     _display.clearDisplay();
     _display.setTextSize(1);
     _display.setTextColor(SSD1306_WHITE);
@@ -56,6 +59,7 @@ void UIMenu::drawMainMenu(const Menu &menu) {
 void UIMenu::drawPowerMenu(const Menu &menu) {
     static const char *opts[] = { "Idle", "Naptime", "Night", "Power Off" };
 
+    RGB(255, 40, 0);
     _display.clearDisplay();
     _display.setTextSize(1);
     _display.setTextColor(SSD1306_WHITE);
@@ -82,6 +86,7 @@ void UIMenu::drawPowerMenu(const Menu &menu) {
 } 
 
 void UIMenu::drawWaves() {
+    RGB(255, 5, 229);
     static float lastAmp[64];
     int32_t buffer[64];
     size_t bytes_read = 0;
@@ -140,6 +145,10 @@ void UIMenu::drawMainSection(const Menu &menu) {
             break;
         case 2: // Tests
             _display.println("Tests");
+            if(!diagnosticExecuted) {
+                testAll();
+                diagnosticExecuted = true;
+            }
             drawWaves();
             return;
             break;

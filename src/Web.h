@@ -18,9 +18,6 @@
 
 extern i2s_chan_handle_t rx_handle;
 
-// Configuração da amostragem
-#define SAMPLE_RATE 16000 
-
 struct Response {
   int code;
   String body;
@@ -31,5 +28,7 @@ void startMIC();
 void startSpeaker();
 String makeRequest(String method, const char* host, int port, String uri);
 void processAudio(WiFiClient &client);
+void playTone(float freq, int duration_ms);
+void playSoftTone(float freq, int duration_ms, float attack);
 
 #endif 

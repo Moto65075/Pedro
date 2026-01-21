@@ -79,8 +79,7 @@
  .pio/libdeps/pedro/Adafruit\ BusIO/Adafruit_SPIDevice.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
- src/PedroDefinitions.h src/Web.h \
- .pio/libdeps/pedro/WiFiManager/WiFiManager.h \
+ src/Web.h .pio/libdeps/pedro/WiFiManager/WiFiManager.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/HashBuilder.h \
@@ -94,4 +93,4 @@
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/DNSServer/src/DNSServer.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src/AsyncUDP.h \
  .pio/libdeps/pedro/WiFiManager/wm_strings_en.h \
- .pio/libdeps/pedro/WiFiManager/wm_consts_en.h
+ .pio/libdeps/pedro/WiFiManager/wm_consts_en.h src/PedroDefinitions.h

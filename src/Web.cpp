@@ -6,25 +6,11 @@ extern WiFiClient client;
 i2s_chan_handle_t rx_handle;
 i2s_chan_handle_t tx_handle;
 
-#define SAMPLE_RATE_T    22050
-#define BYTES_PER_SAMPLE 2
-#define I2S_FRAME       1024   // bytes escritos no I2S por vez
-#define NET_BUFFER      8192   // buffer de rede
-
 void handleWifiManager() {
-    display.clearDisplay();
-    display.setTextSize(1);
-    display.setTextColor(SSD1306_WHITE);
-    display.setCursor(0, 0);
-    display.println("starting...");
-    display.println("waiting wifi....");
-    display.println("waiting....");
-    display.display();
-
-    delay(50);
+    
+    RGB(146, 31, 228);
     bool res;
     res = wm.autoConnect("Pedro WiFI","2504300");
-
     if(!res) {
         Serial.println("Failed to connect");
     } 
@@ -32,6 +18,49 @@ void handleWifiManager() {
         pushLog("WIFI CONNECTED");
         Serial.println("connected...yeey :)");
     }
+}
+
+String makeRequest(String method, const char* host, int port, String uri) {
+  WiFiClient client;
+  
+  if (!client.connect(host, port)) {
+    return "ERRO_CONEXAO";
+  }
+  
+  client.print(method + " " + uri + " HTTP/1.1\r\n");
+  client.print("Host: " + String(host) + "\r\n");
+  client.print("Connection: keep-alive\r\n\r\n"); 
+
+  unsigned long timeout = millis();
+  while (client.available() == 0) {
+    if (millis() - timeout > 5000) {
+      client.stop();
+      return "TIMEOUT";
+    }
+  }
+
+  bool headerEnded = false;
+  while (client.connected()) {
+      String line = client.readStringUntil('\n');
+      if (line == "\r") {
+          headerEnded = true;
+          break; 
+      }
+  }
+
+  if (uri.indexOf("match") > -1) {
+      processAudio(client);
+      client.stop();
+      return "AUDIO_TOCADO";
+  }
+
+  String payload = "";
+  if (headerEnded) {
+      payload = client.readString();
+  }
+  
+  client.stop();
+  return payload;
 }
 
 void startMIC() {
@@ -77,7 +106,7 @@ void startSpeaker() {
 
         .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(
             I2S_DATA_BIT_WIDTH_16BIT,
-            I2S_SLOT_MODE_MONO
+            I2S_SLOT_MODE_STEREO
         ),
 
         .gpio_cfg = {
@@ -93,54 +122,33 @@ void startSpeaker() {
     i2s_channel_enable(tx_handle);
 }
 
-String makeRequest(String method, const char* host, int port, String uri) {
-  WiFiClient client;
-  
-  // 1. Conexão
-  if (!client.connect(host, port)) {
-    return "ERRO_CONEXAO";
-  }
+void playTone(float freq, int duration_ms) {
+    size_t bytes_written;
+    int samples = (44100 * duration_ms) / 1000;
+    int16_t sample;
 
-  // 2. Envia Cabeçalhos
-  client.print(method + " " + uri + " HTTP/1.1\r\n");
-  client.print("Host: " + String(host) + "\r\n");
-  // Importante: Keep-Alive ajuda a não cair a conexão no meio do áudio
-  client.print("Connection: keep-alive\r\n\r\n"); 
-
-  // 3. Aguarda resposta do servidor
-  unsigned long timeout = millis();
-  while (client.available() == 0) {
-    if (millis() - timeout > 5000) {
-      client.stop();
-      return "TIMEOUT";
+    for(int i = 0; i < samples; i++) {
+        sample = (int16_t)(10000 * sin(2 * PI * freq * i / 44100));
+        i2s_channel_write(tx_handle, &sample, sizeof(sample), &bytes_written, portMAX_DELAY);
     }
-  }
+}
 
-  // 4. Pula os headers da resposta HTTP para chegar no corpo (Body)
-  bool headerEnded = false;
-  while (client.connected()) {
-      String line = client.readStringUntil('\n');
-      if (line == "\r") {
-          headerEnded = true;
-          break; // Chegamos no corpo da mensagem
-      }
-  }
+void playSoftTone(float freq, int duration_ms, float attack = 0.2) {
+  size_t bytes_written;
+  int samples = (44100 * duration_ms) / 1000;
+  int16_t sample;
 
-  // === AQUI É A DECISÃO ===
-  // Se a requisição foi para /encoded, entregamos o controle para o Player
-  if (uri.indexOf("match") > -1) {
-      processAudio(client); // O código trava aqui até acabar a música
-      client.stop();
-      return "AUDIO_TOCADO";
-  }
+  for (int i = 0; i < samples; i++) {
+    float progress = (float)i / samples;
+    float amplitude_factor;
 
-  // === SE FOR TEXTO NORMAL (Comandos, JSON) ===
-  String payload = "";
-  if (headerEnded) {
-      // Lê o resto como string normal
-      payload = client.readString();
+    if (progress < attack) {
+      amplitude_factor = progress / attack; 
+    } else {
+      amplitude_factor = 1.0 - ((progress - attack) / (1.0 - attack)); // Desce o volume
+    }
+
+    sample = (int16_t)(8000 * amplitude_factor * sin(2 * PI * freq * i / 44100));
+    i2s_channel_write(tx_handle, &sample, sizeof(sample), &bytes_written, portMAX_DELAY);
   }
-  
-  client.stop();
-  return payload;
 }

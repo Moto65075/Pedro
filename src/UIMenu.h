@@ -9,6 +9,7 @@
 #include "PedroDefinitions.h"
 #include "Web.h"
 
+
 class UIMenu {
 public:
     UIMenu(Adafruit_SSD1306 &display);
@@ -26,5 +27,7 @@ private:
     void drawPowerSection(const Menu &menu);  // modos de energia
     void drawWaves();
 };
+
+extern void testAll();
 
 #endif

@@ -49,8 +49,12 @@ void setupEyes() {
   display.display();
 
   roboEyes.begin(SCREEN_WIDTH, SCREEN_HEIGHT, 100);
-  roboEyes.setAutoblinker(ON, 3, 2);
-  roboEyes.setIdleMode(ON, 2, 2);
+  roboEyes.close(2, 2);
+  roboEyes.setAutoblinker(OFF);
+  roboEyes.setIdleMode(OFF);
+  roboEyes.setPosition(S);
+
+  roboEyes.update();
   pushLog("INITED EYES");
 }
 
@@ -153,25 +157,69 @@ void streamAudio(bool active) {
     }
 }
 
+void testAll() {
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 0);
+    display.println("Testing...");
+    display.display();
+
+  RGB(255, 0, 0);
+  delay(1000);
+  RGB(0, 255, 0);
+  delay(1000);
+  RGB(0, 0, 255);
+  delay(1000);
+  RGB(255, 255, 255);
+  delay(1000);
+
+  for (float f = 200; f < 2000; f += 100) {
+    playSoftTone(f, 50, 0.1);
+  }
+
+  delay(200);
+
+  for (int i = 0; i < 3; i++) {
+    playSoftTone(1000, 100, 0.05);
+  }
+
+  delay(1000);
+}
+
 void setup() {
   Serial.begin(115200);
   delay(10);
 
   esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
 
-  ledcAttach(STATUS_LED_PIN, LEDC_FREQ, LEDC_RES);
+  ledcAttach(R_LED_1, LEDC_FREQ, LEDC_RES);
+  ledcAttach(G_LED_1, LEDC_FREQ, LEDC_RES);
+  ledcAttach(B_LED_1, LEDC_FREQ, LEDC_RES);
   
   if(cause == ESP_SLEEP_WAKEUP_EXT0) {
      fadeOut(5);
   }
 
+
   delay(10);
   
   pushLog("PEDRO READY");
   setupEyes();
+  
   handleWifiManager();
+
+  roboEyes.setAutoblinker(ON, 3, 2);
+  roboEyes.setIdleMode(ON, 2, 2);
+  roboEyes.update();
+
   startMIC();
   startSpeaker();
+    
+  playSoftTone(329.00, 300, 0.1);
+    
+  playSoftTone(523.25, 500, 0.2);  
+
   pmood = IDLE;
   pushLog("POWER ON COMPLETE");
   lastActiveTime = millis();
@@ -185,25 +233,6 @@ void loop() {
     bool powerLong  = btnPower.longPressed();
     bool nextShort  = btnNext.shortPressed();
     bool nextLong   = btnNext.longPressed();
-
-    if(nextLong) {
-      display.clearDisplay();
-      display.setTextSize(1);
-      display.setTextColor(SSD1306_WHITE);
-      display.setCursor(0, 0);
-      display.println("Listening...");
-      display.display();
-      //streamAudio(true);
-      
-      makeRequest("GET", server_ip, server_port, "/match/manchild");
-     
-      return;
-    }
-    /*
-    if(is_connected && !nextLong) {
-      pmood = IDLE;
-      streamAudio(false);
-    }*/
 
     if(
       powerShort && timeoutStarted ||

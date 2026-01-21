@@ -22,7 +22,9 @@
 
 #define LONG_PRESS_TIME 500 
 
-#define STATUS_LED_PIN 4
+#define R_LED_1 GPIO_NUM_14
+#define G_LED_1 GPIO_NUM_32
+#define B_LED_1 GPIO_NUM_4
 #define NAPTIME 120000
 #define INTOSLEEPTIME 50000
 
