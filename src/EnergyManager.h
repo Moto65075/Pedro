@@ -17,8 +17,9 @@ void enableWakeByButton();
 void deepSleep();
 void lightSleep();
 void pushLog(const String &log);
-void fadeOut(int speed);
 void drawWaves(int16_t *buffer, size_t length);
 void RGB(int r, int g, int b);
+void sleeperTimeout();
+void clearTimeout();
 
 #endif

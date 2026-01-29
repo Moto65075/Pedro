@@ -1,6 +1,9 @@
 #include "EnergyManager.h"
 
 extern String LOGS;
+extern int lastActiveTime;
+extern bool timeoutStarted;
+int currentR = 0, currentG = 0, currentB = 0;
 
 void enableWakeByButton() {
   esp_sleep_enable_ext0_wakeup(WAKE_BUTTON_PIN, 1);
@@ -11,8 +14,6 @@ void deepSleep() {
   playSoftTone(329.63, 600, 0.4); 
   Serial.println("go deep sleep no timer...");
   delay(100);
-
-  fadeOut(5);
 
   enableWakeByButton();
   display.clearDisplay();
@@ -59,14 +60,50 @@ void pushLog(const String &log) {
 }
 
 void RGB(int r, int g, int b) {
-  ledcWrite(R_LED_1, 255 - r);
-  ledcWrite(G_LED_1, 255 - g);
-  ledcWrite(B_LED_1, 255 - b);
+
+  while(currentR != r || currentG != g || currentB != b) {
+    
+  if(currentR < r) currentR++;
+  else if(currentR > r) currentR--;
+    
+  if(currentG < g) currentG++;
+  else if(currentG > g) currentG--;
+
+  if(currentB < b) currentB++;
+  else if(currentB > b) currentB--;
+  ledcWrite(R_LED_1, 255 - currentR);
+  ledcWrite(G_LED_1, 255 - currentG);
+  ledcWrite(B_LED_1, 255 - currentB);
+  delay(0.5);
+  }
 }
 
-void fadeOut(int speed) {
-  for (int brightness = 80; brightness >= 0; brightness -= speed) {
-    if (brightness < 0) brightness = 0;
-    delay(FADE_INTERVAL);
+void sleeperTimeout() {
+  unsigned long actualTime = millis();
+
+  switch (powerop) {
+  case NO_TIMER: 
+    if(actualTime - lastActiveTime >= NAPTIME) {
+    Serial.println("long time without interact");
+    powerop = INTO_SLEEP;
+    lastActiveTime = actualTime;
+    timeoutStarted = true;
+    }
+    break; 
+  case INTO_SLEEP:
+    if(actualTime - lastActiveTime >= INTOSLEEPTIME) {
+    powerop = SLEEP_OVER;
+    }
+    break;
+  case SLEEP_OVER:
+    lightSleep();
+    break;
   }
+}
+
+void clearTimeout() {
+  if(!timeoutStarted) return;
+   timeoutStarted = false;
+   lastActiveTime = millis();
+   powerop = NO_TIMER;
 }

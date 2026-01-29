@@ -1,8 +1,19 @@
 #include "Web.h"
 
 WiFiManager wm;
+
 extern Adafruit_SSD1306 display;
 extern WiFiClient client;
+
+extern bool is_connected;
+
+const char* server_ip = "192.168.1.5";
+const uint16_t server_port = 80;
+
+const int CHUNK_SIZE = 8192; 
+uint8_t audio_buffer[CHUNK_SIZE];
+int buffer_idx = 0;
+
 i2s_chan_handle_t rx_handle;
 i2s_chan_handle_t tx_handle;
 
@@ -17,6 +28,12 @@ void handleWifiManager() {
     else {
         pushLog("WIFI CONNECTED");
         Serial.println("connected...yeey :)");
+        const char* ntpServer = "pool.ntp.org";
+        const long  gmtOffset_sec = -3;
+        const int   daylightOffset_sec = 3600;
+
+        configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+        Serial.println("started hours");
     }
 }
 
@@ -49,11 +66,11 @@ String makeRequest(String method, const char* host, int port, String uri) {
   }
 
   if (uri.indexOf("match") > -1) {
-      processAudio(client);
+      playAudio(client);
       client.stop();
       return "AUDIO_TOCADO";
   }
-
+  
   String payload = "";
   if (headerEnded) {
       payload = client.readString();
@@ -106,7 +123,7 @@ void startSpeaker() {
 
         .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(
             I2S_DATA_BIT_WIDTH_16BIT,
-            I2S_SLOT_MODE_STEREO
+            I2S_SLOT_MODE_MONO
         ),
 
         .gpio_cfg = {
@@ -151,4 +168,111 @@ void playSoftTone(float freq, int duration_ms, float attack = 0.2) {
     sample = (int16_t)(8000 * amplitude_factor * sin(2 * PI * freq * i / 44100));
     i2s_channel_write(tx_handle, &sample, sizeof(sample), &bytes_written, portMAX_DELAY);
   }
+}
+
+void streamAudio(bool active) {
+    if (!active) {
+        if (is_connected) {
+            // No modo Chunked, o fim da transmissão é indicado por um chunk de tamanho zero
+            client.print("0\r\n\r\n"); 
+            client.stop();
+            is_connected = false;
+            Serial.println("Streaming finalizado e enviado para /tts.");
+        }
+        return;
+    }
+
+    if (!is_connected) {
+        if (client.connect(server_ip, server_port)) {
+            is_connected = true;
+
+            // --- CABEÇALHO HTTP MANUAL ---
+            client.print("POST /tts HTTP/1.1\r\n"); // Aqui definimos a ROTA
+            client.print("Host: "); client.print(server_ip); client.print("\r\n");
+            client.print("Content-Type: application/octet-stream\r\n");
+            client.print("Transfer-Encoding: chunked\r\n"); // Permite enviar áudio sem saber o tamanho final
+            client.print("Connection: keep-alive\r\n");
+            client.print("\r\n"); // Fim do cabeçalho
+            
+            Serial.println("Conectado à rota /tts!");
+        } else {
+            return; 
+        }
+    }
+
+    int32_t raw_samples[128];
+    size_t bytes_read = 0;
+
+    if (i2s_channel_read(rx_handle, raw_samples, sizeof(raw_samples), &bytes_read, 10) == ESP_OK) {
+        int samples = bytes_read / sizeof(int32_t);
+
+        for (int i = 0; i < samples; i++) {
+            int16_t sample16 = (int16_t)(raw_samples[i] >> 14);
+
+            audio_buffer[buffer_idx++] = (uint8_t)(sample16 & 0xFF);
+            audio_buffer[buffer_idx++] = (uint8_t)((sample16 >> 8) & 0xFF);
+
+            if (buffer_idx >= CHUNK_SIZE) {
+                if (client.connected()) {
+                    // --- FORMATO HTTP CHUNKED ---
+                    // 1. Envia o tamanho do chunk em Hexadecimal
+                    client.print(String(CHUNK_SIZE, HEX));
+                    client.print("\r\n");
+                    // 2. Envia os dados binários do áudio
+                    client.write(audio_buffer, CHUNK_SIZE);
+                    client.print("\r\n");
+                } else {
+                    is_connected = false;
+                }
+                buffer_idx = 0;
+            }
+        }
+    }
+}
+
+void testAll() {
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 0);
+    display.println("Testing...");
+    display.display();
+
+  RGB(255, 0, 0);
+  delay(1000);
+  RGB(0, 255, 0);
+  delay(1000);
+  RGB(0, 0, 255);
+  delay(1000);
+  RGB(255, 255, 255);
+  delay(1000);
+
+  for (float f = 200; f < 2000; f += 100) {
+    playSoftTone(f, 50, 0.1);
+  }
+
+  delay(200);
+
+  for (int i = 0; i < 3; i++) {
+    playSoftTone(1000, 100, 0.05);
+  }
+
+  delay(1000);
+}
+
+void playAudio(WiFiClient &client) {
+    static uint8_t buffer[2048];
+    size_t bytes_written;
+
+    while (client.connected() || client.available()) {
+        size_t len = client.read(buffer, sizeof(buffer));
+        
+        if(len <= 0) continue;
+
+        len &= ~1;
+
+        if(len == 0) continue;
+
+        i2s_channel_write(tx_handle, buffer, len, &bytes_written, portMAX_DELAY);
+    }
 }

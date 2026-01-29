@@ -1,5 +1,6 @@
 .pio/build/pedro/src/Menu.cpp.o: src/Menu.cpp src/Menu.h \
- src/EnergyManager.h \
+ .pio/libdeps/pedro/Adafruit\ SSD1306/Adafruit_SSD1306.h \
+ .pio/libdeps/pedro/Adafruit\ GFX\ Library/Adafruit_GFX.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp_arduino_version.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp8266-compat.h \
@@ -44,8 +45,19 @@
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/freertos_stats.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
- C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
+ .pio/libdeps/pedro/Adafruit\ GFX\ Library/gfxfont.h \
+ .pio/libdeps/pedro/Adafruit\ BusIO/Adafruit_I2CDevice.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-log.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareI2C.h \
+ .pio/libdeps/pedro/Adafruit\ BusIO/Adafruit_SPIDevice.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
+ .pio/libdeps/pedro/Adafruit\ GFX\ Library/Fonts/Org_01.h \
+ src/EnergyManager.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiType.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiSTA.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiGeneric.h \
@@ -68,17 +80,6 @@
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiServer.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/Network/src/NetworkUdp.h \
- .pio/libdeps/pedro/Adafruit\ SSD1306/Adafruit_SSD1306.h \
- .pio/libdeps/pedro/Adafruit\ GFX\ Library/Adafruit_GFX.h \
- .pio/libdeps/pedro/Adafruit\ GFX\ Library/gfxfont.h \
- .pio/libdeps/pedro/Adafruit\ BusIO/Adafruit_I2CDevice.h \
- C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
- C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
- C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-log.h \
- C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareI2C.h \
- .pio/libdeps/pedro/Adafruit\ BusIO/Adafruit_SPIDevice.h \
- C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
- C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
  src/Web.h .pio/libdeps/pedro/WiFiManager/WiFiManager.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
@@ -93,4 +94,6 @@
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/DNSServer/src/DNSServer.h \
  C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src/AsyncUDP.h \
  .pio/libdeps/pedro/WiFiManager/wm_strings_en.h \
- .pio/libdeps/pedro/WiFiManager/wm_consts_en.h src/PedroDefinitions.h
+ .pio/libdeps/pedro/WiFiManager/wm_consts_en.h src/PedroDefinitions.h \
+ src/Thinker.h \
+ C:/Users/moto/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h

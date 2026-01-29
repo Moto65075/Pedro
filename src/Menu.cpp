@@ -1,119 +1,176 @@
 #include "Menu.h"
 
-Menu::Menu()
-: _currentUI(UIState::IDLE_MODE),
-  _currentSectionIndex(0),
-  _sectionOpened(false)
-{}
+extern Adafruit_SSD1306 display;
+extern String LOGS;
+extern int lastActiveTime;
 
-UIState Menu::state() const            { return _currentUI; }
-int     Menu::currentIndex() const     { return _currentSectionIndex; }
-bool    Menu::sectionOpened() const    { return _sectionOpened; }
+int itemIndex = 0;
+DisplayingType display_type = DisplayingType::IDLE;
 
-void Menu::mainMenu() {
-    _currentUI = UIState::MAIN_MENU;
-    _currentSectionIndex = 0;
-    _sectionOpened = false;
+void drawMainMenu() {
+    display_type = DisplayingType::ON_MENU;
+    delay(50);
+    RGB(30, 50, 200);
+display.clearDisplay();
+display.setTextColor(1);
+display.setTextWrap(false);
+display.setFont(&Org_01);
+display.setCursor(4, 9);
+display.print("MENU");
+
+if(itemIndex == 0) display.fillCircle(6, 22, 2, 1);
+else display.drawCircle(6, 22, 2, 1);
+
+display.setCursor(12, 22);
+display.print("Infos");
+
+if(itemIndex == 1) display.fillCircle(6, 34, 2, 1);
+else display.drawCircle(6, 34, 2, 1);
+
+display.setCursor(12, 34);
+display.print("Outputs");
+
+if(itemIndex == 2) display.fillCircle(6, 46, 2, 1);
+else display.drawCircle(6, 46, 2, 1);
+
+display.setCursor(12, 46);
+display.print("Tests");
+
+if(itemIndex == 3) display.fillCircle(6, 57, 2, 1);
+else display.drawCircle(6, 57, 2, 1);
+
+display.setCursor(12, 57);
+display.print("RGB");
+
+if(itemIndex == 4) display.fillCircle(64, 22, 2, 1);
+display.drawCircle(64, 22, 2, 1);
+
+display.setCursor(70, 22);
+display.print("Power off");
+
+if(itemIndex == 5) display.fillCircle(64, 34, 2, 1);
+display.drawCircle(64, 34, 2, 1);
+
+display.setCursor(70, 34);
+display.print("Naptime");
+
+if(itemIndex == 6) display.fillCircle(64, 46, 2, 1);
+display.drawCircle(64, 46, 2, 1);
+
+display.setCursor(70, 46);
+display.print("Exit");
+
+display.display();
 }
 
-void Menu::powerMenu() {
-    _currentUI = UIState::POWER_MENU;
-    _currentSectionIndex = 0;
-    _sectionOpened = false;
+void holdToNextItem() {
+  itemIndex++;
+  if(itemIndex > 6) itemIndex = 0;
+  drawMainMenu();
+  lastActiveTime = millis();
 }
 
-void Menu::returnTo(UIState ui) {
-    _currentUI = ui;
-    _sectionOpened = false;
-    _currentSectionIndex = 0;
-}
-
-void Menu::select() {
-    if (_sectionOpened) {
-        // já está numa tela aberta, POWER curto = voltar ao menu atual
-        returnTo(_currentUI);
-        return;
+void executeMenuItem() {
+  if(display_type == DisplayingType::ON_ACTION) {
+    display_type = DisplayingType::ON_MENU;
+    drawMainMenu();
+    return;
+  }
+  display_type = DisplayingType::ON_ACTION;
+  switch (itemIndex) {
+    case 0: {
+      display.clearDisplay();
+      display.setTextColor(1);
+      display.setTextWrap(false);
+      display.setFont(&Org_01);
+      display.setCursor(4, 8);
+      display.print("Infos");
+      display.setFont();
+      display.setCursor(4, 24);
+      display.print("version: Coubs 1.2");
+      display.setCursor(4, 36);
+      display.print(WiFi.SSID());
+      display.setCursor(4, 51);
+      display.print("center - return");
+      display.display();
+      
+      break;
     }
-     
-    if (_currentUI == UIState::MAIN_MENU) {
-        switch (_currentSectionIndex) {
-            case 0: // Info
-                // aqui você desenha FIRMWARE INFO no loop
-                break;
-            case 1: // Testes
-                // desenha tela Tests no loop
-                break;
-            case 2: // LOGS
-                
-                break;
-            case 3: // Exit
-                returnTo(UIState::IDLE_MODE);
-                return;
-        }
-    } else if (_currentUI == UIState::POWER_MENU) {
-        // defina os casos de Power (Idle, Night, Light, Off)
-        switch (_currentSectionIndex) {
-            case 0: // Idle
-                returnTo(UIState::IDLE_MODE);
-                return;
-            case 1: 
-                lightSleep();
-                returnTo(UIState::IDLE_MODE);
-                return;
-                break;
-            case 2: {
-                break;
-            }
-            case 3:
-                
-                deepSleep();
-                break;
-        }
-    } 
+    case 1: {
+      display.clearDisplay();
+      display.setTextColor(1);
+      display.setTextWrap(false);
+      display.setFont(&Org_01);
+      display.setCursor(4, 8);
+      display.print("Outputs");
+      display.setFont();
+      display.setCursor(4, 24);
+      display.print(LOGS);
+      display.setCursor(4, 51);
+      display.print("center - return");
+      display.display();
 
-    // se não saiu, significa que abriu uma “section”
-    _sectionOpened = true;
+      break;
+    }
+    case 2: {
+      testAll();
+      display_type = DisplayingType::ON_MENU;
+      drawMainMenu();
+      break;
+    }
+    case 3: {
+
+      display.clearDisplay();
+      display.setTextColor(1);
+      display.setTextWrap(false);
+      display.setFont(&Org_01);
+      display.setCursor(4, 8);
+      display.print("Calibrating....");
+      display.display();
+
+      CalibrationData calib = calibrateEnvironment(10000);
+      applyCalibration(calib);
+
+      display.clearDisplay();
+      display.setTextColor(1);
+      display.setTextWrap(false);
+      display.setFont(&Org_01);
+      display.setCursor(4, 8);
+      display.print("Done!");
+      display.setFont();
+      display.setCursor(4, 24);
+      display.print("Avg Energy: " + String(calib.avgEnergy));
+      display.setCursor(4, 36);
+      display.print("Variance : " + String(calib.variance));
+      display.setCursor(4, 51);
+      display.print("center - return");
+      display.display();
+
+      break;
+    }
+    case 4: {
+      deepSleep();
+      break;
+    }
+    case 5: {
+      lightSleep();
+      exitMenu();
+      break;
+    }
+    case 6: 
+      exitMenu();
+      break;
+  }
 }
 
-void Menu::nextSection() {
-    if (_currentUI == UIState::IDLE_MODE) return;
-
-    int maxIndex = (_currentUI == UIState::MAIN_MENU)
-                   ? _sectionsMain
-                   : _sectionsPower;
-
-    _currentSectionIndex++;
-    if (_currentSectionIndex > maxIndex)
-        _currentSectionIndex = 0;
+void exitMenu() {
+    display_type = DisplayingType::IDLE;
+    display.clearDisplay();
+    display.display();
+    delay(50);
+    RGB(0, 0, 0);
 }
 
-void Menu::hold(bool powerShort, bool powerLong,
-                bool nextShort)
-{
-    // LONG POWER → POWER_MENU, de qualquer lugar
-    if (powerLong) {
-        powerMenu();
-        return;
-    }
-
-    // Botão NEXT (GPIO5) → muda índice, se estiver em menu
-    if (nextShort && !_sectionOpened) {
-        nextSection();
-    }
-
-    // POWER curto → depende do estado
-    if (powerShort) {
-        switch (_currentUI) {
-            case UIState::IDLE_MODE:
-                // sai dos olhos e entra no MAIN_MENU
-                mainMenu();
-                break;
-
-            case UIState::MAIN_MENU:
-            case UIState::POWER_MENU:
-                // seleciona / volta
-                select();
-                break;
-        }
-    }
+DisplayingType menuState() {
+    return display_type;
 }

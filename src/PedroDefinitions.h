@@ -25,8 +25,10 @@
 #define R_LED_1 GPIO_NUM_14
 #define G_LED_1 GPIO_NUM_32
 #define B_LED_1 GPIO_NUM_4
-#define NAPTIME 120000
+#define NAPTIME 3000000
 #define INTOSLEEPTIME 50000
+
+#define BRAIN_TICK 80
 
 const int LEDC_FREQ = 5000;
 const int LEDC_RES = 8;
